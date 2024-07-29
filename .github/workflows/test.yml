@@ -6,13 +6,12 @@ name: Test
 on:
   workflow_dispatch: # For manual triggering
   push:
-    branches:
-      - main
+    # branches:
+    #   - main
   pull_request:
-    types: [synchronize, reopened, edited]  # opened: If PR is created a 'opened' and a 'edited' is triggered
+    types: [synchronize, reopened, edited] # opened: If PR is created a 'opened' and a 'edited' is triggered
 
 jobs:
-
   milestone-check:
     runs-on: ubuntu-22.04
 
@@ -73,12 +72,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install spellchecker
-        run:
-          npm install -g cspell@latest
+        run: npm install -g cspell@latest
       - name: Run spellchecker
         run: |
           cspell
-
 
   build:
     runs-on: ${{ matrix.os }}
@@ -107,15 +104,14 @@ jobs:
       matrix:
         os: [ubuntu-20.04]
         gcc: [gcc-8]
-        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12', 'pypy-3.8']
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "pypy-3.8"]
 
         include:
-
           # Test additional compilers with Linux.
           # Note that gcc-5, gcc-6, gcc-8, gcc-12, gcc-13, gcc-14, clang-10, clang-13, clang-14 and clang-15 is handled via Docker.
           - os: ubuntu-20.04
             gcc: gcc-9
-            python-version: '3.9'
+            python-version: "3.9"
           - os: ubuntu-22.04
             gcc: gcc-11
             python-version: "3.12"
@@ -124,7 +120,7 @@ jobs:
           # Test minimum and maximum Python version on Windows.
           - os: windows-2019
             gcc: gcc
-            python-version: '3.8'
+            python-version: "3.8"
           - os: windows-2019
             gcc: gcc
             python-version: "3.12"
@@ -133,7 +129,7 @@ jobs:
           # Test minimum and maximum Python version on Mac OS.
           - os: macos-12
             gcc: gcc
-            python-version: '3.8'
+            python-version: "3.8"
           - os: macos-12
             gcc: gcc-13
             python-version: "3.12"
@@ -284,7 +280,22 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        gcc: [gcc-5, gcc-6, gcc-8, gcc-9, gcc-10, gcc-11, gcc-12, gcc-13, gcc-14, clang-10, clang-13, clang-14, clang-15]
+        gcc:
+          [
+            gcc-5,
+            gcc-6,
+            gcc-8,
+            gcc-9,
+            gcc-10,
+            gcc-11,
+            gcc-12,
+            gcc-13,
+            gcc-14,
+            clang-10,
+            clang-13,
+            clang-14,
+            clang-15,
+          ]
 
     steps:
       - name: Setup environment
