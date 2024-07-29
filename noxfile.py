@@ -22,18 +22,18 @@ import io
 import os
 import platform
 import re
+import shutil
 import socket
+import subprocess
 import sys
+import zipfile
+from contextlib import ExitStack
+from pathlib import Path
 from time import sleep
 from typing import Tuple
-import requests
-import shutil
-import subprocess
-import zipfile
+
 import nox
-
-from contextlib import ExitStack
-
+import requests
 
 GCOVR_ISOLATED_TEST = os.getenv("GCOVR_ISOLATED_TEST") == "zkQEVaBpXF1i"
 ALL_COMPILER_VERSIONS = [
@@ -373,6 +373,20 @@ def check_bundled_app(session: nox.Session) -> None:
                 f"./gcovr --{format} $TMPDIR/out.{format}",
                 external=True,
             )
+    if "CI" in os.environ:
+        executable = next(Path().glob("build/gcovr*"))
+        platform_suffix = "linux"
+        if platform.system() == "Windows":
+            platform_suffix = "win"
+        if platform.system() == "Darwin":
+            platform_suffix = "macos"
+        dest_path = (
+            Path()
+            / "artifacts"
+            / f"{executable.stem}-{platform_suffix}{executable.suffix}"
+        )
+        dest_path.parent.mkdir(parents=True, exist_ok=True)
+        executable.rename(dest_path)
 
 
 @nox.session()
